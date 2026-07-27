@@ -1,0 +1,48 @@
+name: dgsrehberi
+description: "DGS Rehberi - Çalışma Takip Uygulaması"
+publish_to: 'none'
+
+version: 1.1.0+5
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.5+1
+  fl_chart: ^1.2.0
+  shared_preferences: ^2.5.5
+  google_fonts: ^8.0.2
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  image_picker: ^1.1.2
+  permission_handler: ^11.3.1
+  google_mobile_ads: ^9.0.0
+  flutter_foreground_task: ^8.15.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
+  change_app_package_name: ^1.5.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logo.png"
+
+flutter_native_splash:
+  color: "#0F0E17"
+  android_12:
+    color: "#0F0E17"
+    icon_background_color: "#0F0E17"

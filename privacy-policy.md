@@ -1,27 +1,35 @@
-# Gizlilik Politikası (Privacy Policy)
+# DGS Rehberi Gizlilik Politikası
 
-**Son Güncelleme Tarihi:** 12 Nisan 2026
+**Son güncelleme:** 27 Temmuz 2026
 
-**DGS Rehberi** ("Uygulama") olarak gizliliğinize saygı duyuyor ve kişisel verilerinizin korunmasına önem veriyoruz. Bu Gizlilik Politikası, uygulamamızı kullandığınızda toplanan verilerin (veya toplanmayan verilerin) nasıl işlendiğini açıklar.
+DGS Rehberi, çalışma planlama ve takip özelliklerini hesap oluşturmadan kullanmanızı sağlar.
 
-## 1. Toplanan Bilgiler
-Uygulamamız, kullanıcıların kişisel olarak kimliğini belirleyebilecek (ad, soyad, e-posta adresi, telefon numarası, konum bilgisi vb.) hiçbir veriyi **toplamaz, kaydetmez veya üçüncü şahıslarla paylaşmaz**. 
+## Cihazda saklanan veriler
 
-Uygulamanın temel özellikleri (örn. zamanlayıcı, deneme analizleri, hedef takibi) tamamen cihazınızda **yerel** olarak çalışır ve hiçbir kullanıcı verisi sunucularımıza gönderilmez.
+Çalışma süreleri, hedefler, deneme sonuçları, soru kayıtları, notlar, seçtiğiniz fotoğraflar ve uygulama tercihleri yalnızca cihazınızda saklanır. Bu veriler geliştiriciye veya bir sunucuya gönderilmez. Uygulamayı kaldırdığınızda yerel veriler de cihazdan kaldırılabilir.
 
-## 2. İzinler ve Kamera/Galeri Erişimi
-Uygulama, temel işlevlerini yerine getirmek adına hiçbir gereksiz izne (kişiler, konum, kamera vb.) ihtiyaç duymaz ve bu izinleri talep etmez. Eğer görsel ekleme gibi bir özellik cihazınızda yerel olarak kullanılıyorsa, bu veriler hiçbir şekilde dışarı aktarılmaz.
+## Kamera ve fotoğraflar
 
-## 3. Üçüncü Taraf Hizmetleri
-Uygulamamız herhangi bir üçüncü taraf analiz (analytics) veya reklam SDK'sı (Google AdMob vb. hariç, eğer kullanıyorsanız) içermiyorsa, kullanıcı profilinizi oluşturmaz. Eğer uygulamada reklam gösterimi yapılıyorsa, ilgili reklam sağlayıcılarının (Google vs.) anonim kullanım verilerini sadece reklam amaçlı toplayabileceğini hatırlatırız.
+Kamera ve fotoğraf arşivi izinleri yalnızca soru ve notlarınıza görsel ekleyebilmeniz için kullanılır. Seçtiğiniz veya çektiğiniz görseller cihazınızda kalır ve reklam sağlayıcısına aktarılmaz.
 
-## 4. Veri Güvenliği
-Hiçbir kişisel veri toplamadığımız için verileriniz tamamen güvendedir. Tüm istatistikleriniz uygulamanın yüklü olduğu cihazın kendi yerel depolama alanında tutulmaktadır. Uygulamayı sildiğinizde yerel olarak kaydedilen tüm uygulama içi verileriniz de silinir.
+## Google AdMob
 
-## 5. Politika Değişiklikleri
-Gizlilik politikamızı zaman zaman güncelleyebiliriz. Herhangi bir değişiklik olması durumunda bu sayfa üzerinden güncel politikamızı yayınlayacağız.
+Uygulama reklam göstermek için Google Mobile Ads (AdMob) hizmetini kullanır. Google; reklam sunma, ölçüm, sahtekârlığı önleme ve güvenlik amaçlarıyla reklam kimliği, IP adresi, yaklaşık konum, cihaz bilgileri, reklam etkileşimleri, performans ve tanılama verilerini işleyebilir. Bu işlemler [Google Gizlilik Politikası](https://policies.google.com/privacy) ve [Google reklam politikalarına](https://policies.google.com/technologies/ads) tabidir.
 
-## 6. İletişim
-Gizlilik politikamızla ilgili veya uygulamanın verilerinizi nasıl işlediği hakkında sorularınız varsa, bizimle iletişime geçebilirsiniz.
+## Reklam ve gizlilik tercihleri
 
-E-posta: iletisim@birakiyoruziletisim.com
+Gerekli bölgelerde Google User Messaging Platform üzerinden reklam ve kişisel veri kullanım tercihleri sorulur. İzin durumu alınmadan reklam isteği başlatılmaz. Sunulduğu bölgelerde tercihlerinizi uygulamanın Ayarlar ekranındaki **Reklam Gizliliği** seçeneğinden yeniden değiştirebilirsiniz.
+
+iOS cihazlarda kişiselleştirilmiş reklam ve reklam ölçümü için Apple Uygulama Takibi Şeffaflığı izni istenebilir. İzni reddetmeniz uygulamanın kullanılmasını engellemez.
+
+## Resmî kurumlarla ilişki
+
+DGS Rehberi, ÖSYM veya başka bir resmî kurum tarafından sunulmaz ya da desteklenmez. Bağımsız bir çalışma ve planlama aracıdır.
+
+## Çocukların gizliliği
+
+Uygulama özellikle 13 yaşın altındaki çocuklara yönelik değildir. Bir çocuğa ait verinin uygunsuz biçimde işlendiğini düşünüyorsanız bizimle iletişime geçebilirsiniz.
+
+## İletişim
+
+Gizlilikle ilgili sorularınız için: **emre.demireeel@gmail.com**
