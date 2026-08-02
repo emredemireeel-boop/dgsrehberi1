@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -54,7 +55,9 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
     final ad = BannerAd(
       adUnitId: AdService.instance.bannerAdUnitId,
       size: size,
-      request: const AdRequest(),
+      request: AdRequest(
+        nonPersonalizedAds: defaultTargetPlatform == TargetPlatform.iOS,
+      ),
       listener: BannerAdListener(
         onAdLoaded: (loadedAd) {
           if (!mounted) {

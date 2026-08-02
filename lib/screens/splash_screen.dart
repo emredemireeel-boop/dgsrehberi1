@@ -580,7 +580,7 @@ class _SplashScreenState extends State<SplashScreen>
                       const SizedBox(height: 28),
                       // Versiyon
                       Text(
-                        'v1.1.0  •  © 2026 DGS Rehberi',
+                        'v1.1.1  •  © 2026 DGS Rehberi',
                         style: GoogleFonts.inter(
                           fontSize: 11,
                           color: Colors.white.withValues(alpha: 0.2),

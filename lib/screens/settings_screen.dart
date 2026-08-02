@@ -350,7 +350,7 @@ class SettingsScreen extends StatelessWidget {
           Text('DGS Rehberi',
               style: GoogleFonts.outfit(
                   fontSize: 16, fontWeight: FontWeight.bold, color: textColor)),
-          Text('Çalışma takip uygulaması • v1.1.0',
+          Text('Çalışma takip uygulaması • v1.1.1',
               style: GoogleFonts.inter(
                   fontSize: 12, color: textColor.withValues(alpha: 0.5))),
         ])),

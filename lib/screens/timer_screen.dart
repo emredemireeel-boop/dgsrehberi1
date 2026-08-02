@@ -2,12 +2,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
 import '../providers/timer_provider.dart';
 import '../providers/data_provider.dart';
 import '../models/study_session.dart';
-import '../widgets/banner_ad_widget.dart';
 import '../services/ad_service.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -226,17 +224,6 @@ class _TimerScreenState extends State<TimerScreen>
         CurvedAnimation(parent: _cardEntranceCtrl, curve: Curves.easeOutBack));
     _cardEntranceCtrl.forward();
     _modeChangeCtrl.forward();
-
-    _requestPermissions();
-  }
-
-  Future<void> _requestPermissions() async {
-    // Android 13+ için bildirim izni iste
-    final NotificationPermission notificationPermissionStatus =
-        await FlutterForegroundTask.checkNotificationPermission();
-    if (notificationPermissionStatus != NotificationPermission.granted) {
-      await FlutterForegroundTask.requestNotificationPermission();
-    }
   }
 
   @override
@@ -661,117 +648,129 @@ class _TimerScreenState extends State<TimerScreen>
                         ),
                       ),
                     ),
-                    // Main scrollable content
-                    SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 24, horizontal: 20),
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 560),
-                          child: Column(
-                            children: [
-                              // ── MODE SELECTOR ──────────────────────────────
-                              _ModeSelector(
-                                currentMode: mode,
-                                onModeChange: (newMode) {
-                                  if (timerProvider.secondsElapsed > 0 ||
-                                      timerProvider.breakSecondsElapsed > 0) {
-                                    _showResetDialog(
-                                        context, timerProvider, newMode);
-                                  } else {
-                                    timerProvider.setMode(newMode);
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: 28),
+                    // Main scrollable content. Small iPhones use a compact
+                    // composition so the primary action never hides behind
+                    // the ad or navigation bars.
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final compact = constraints.maxHeight < 720;
+                        final pagePadding = compact ? 14.0 : 24.0;
 
-                              // ── STATUS BADGE ───────────────────────────────
-                              AnimatedBuilder(
-                                animation: _modeScaleAnim,
-                                builder: (context, child) => Transform.scale(
-                                    scale: _modeScaleAnim.value,
-                                    child: Opacity(
-                                        opacity: _modeFadeAnim.value,
-                                        child: child)),
-                                child: _StatusBadge(
-                                  mode: mode,
-                                  isBreak: isBreak,
-                                  isRunning: isRunning,
-                                  isFocusFinished: isFocusFinished,
-                                  isBreakFinished: isBreakFinished,
-                                  meta: meta,
-                                  timerProvider: timerProvider,
-                                ),
-                              ),
-                              const SizedBox(height: 32),
-
-                              // ── RING + TIMER ───────────────────────────────
-                              AnimatedBuilder(
-                                animation: _pulseAnim,
-                                builder: (context, child) => Transform.scale(
-                                    scale: _pulseAnim.value, child: child),
-                                child: _TimerRing(
-                                  timeText: isBreak
-                                      ? timerProvider.formattedBreakTime
-                                      : timerProvider.formattedTime,
-                                  progress: mode == TimerMode.serbest
-                                      ? null
-                                      : ringProgress,
-                                  ringColor: ringColor,
-                                  isBreak: isBreak,
-                                  isRunning: isRunning,
-                                  mode: mode,
-                                  meta: meta,
-                                  timerProvider: timerProvider,
-                                ),
-                              ),
-                              const SizedBox(height: 36),
-
-                              // ── SERBEST STAT PILLS ─────────────────────────
-                              if (mode == TimerMode.serbest) ...[
-                                _SerbestStatRow(
-                                    timerProvider: timerProvider, meta: meta),
-                                const SizedBox(height: 32),
-                              ],
-
-                              // ── ACTION BUTTONS ─────────────────────────────
-                              _ActionButtons(
-                                timerProvider: timerProvider,
-                                meta: meta,
-                                isFocusFinished: isFocusFinished,
-                                isBreakFinished: isBreakFinished,
-                                onSave: (dur, brk) =>
-                                    _saveSession(context, dur, brk),
-                              ),
-
-                              const SizedBox(height: 24),
-
-                              // ── DAILY GOAL & STREAK ────────────────────────
-                              _DailyGoalProgress(
-                                dataProvider:
-                                    Provider.of<DataProvider>(context),
-                                timerProvider: timerProvider,
-                                isDark: Theme.of(context).brightness ==
-                                    Brightness.dark,
-                              ),
-
-                              const SizedBox(height: 16),
-                            ],
+                        return SingleChildScrollView(
+                          padding: EdgeInsets.symmetric(
+                            vertical: pagePadding,
+                            horizontal: 20,
                           ),
-                        ),
-                      ),
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 560),
+                              child: Column(
+                                children: [
+                                  // ── MODE SELECTOR ──────────────────────────────
+                                  _ModeSelector(
+                                    currentMode: mode,
+                                    compact: compact,
+                                    onModeChange: (newMode) {
+                                      if (timerProvider.secondsElapsed > 0 ||
+                                          timerProvider.breakSecondsElapsed >
+                                              0) {
+                                        _showResetDialog(
+                                            context, timerProvider, newMode);
+                                      } else {
+                                        timerProvider.setMode(newMode);
+                                      }
+                                    },
+                                  ),
+                                  SizedBox(height: compact ? 16 : 28),
+
+                                  // ── STATUS BADGE ───────────────────────────────
+                                  AnimatedBuilder(
+                                    animation: _modeScaleAnim,
+                                    builder: (context, child) =>
+                                        Transform.scale(
+                                            scale: _modeScaleAnim.value,
+                                            child: Opacity(
+                                                opacity: _modeFadeAnim.value,
+                                                child: child)),
+                                    child: _StatusBadge(
+                                      mode: mode,
+                                      isBreak: isBreak,
+                                      isRunning: isRunning,
+                                      isFocusFinished: isFocusFinished,
+                                      isBreakFinished: isBreakFinished,
+                                      meta: meta,
+                                      timerProvider: timerProvider,
+                                    ),
+                                  ),
+                                  SizedBox(height: compact ? 18 : 32),
+
+                                  // ── RING + TIMER ───────────────────────────────
+                                  AnimatedBuilder(
+                                    animation: _pulseAnim,
+                                    builder: (context, child) =>
+                                        Transform.scale(
+                                            scale: _pulseAnim.value,
+                                            child: child),
+                                    child: _TimerRing(
+                                      timeText: isBreak
+                                          ? timerProvider.formattedBreakTime
+                                          : timerProvider.formattedTime,
+                                      progress: mode == TimerMode.serbest
+                                          ? null
+                                          : ringProgress,
+                                      ringColor: ringColor,
+                                      isBreak: isBreak,
+                                      isRunning: isRunning,
+                                      mode: mode,
+                                      meta: meta,
+                                      timerProvider: timerProvider,
+                                      compact: compact,
+                                    ),
+                                  ),
+                                  SizedBox(height: compact ? 20 : 36),
+
+                                  // ── SERBEST STAT PILLS ─────────────────────────
+                                  if (mode == TimerMode.serbest) ...[
+                                    _SerbestStatRow(
+                                        timerProvider: timerProvider,
+                                        meta: meta),
+                                    SizedBox(height: compact ? 18 : 32),
+                                  ],
+
+                                  // ── ACTION BUTTONS ─────────────────────────────
+                                  _ActionButtons(
+                                    timerProvider: timerProvider,
+                                    meta: meta,
+                                    isFocusFinished: isFocusFinished,
+                                    isBreakFinished: isBreakFinished,
+                                    onSave: (dur, brk) =>
+                                        _saveSession(context, dur, brk),
+                                    compact: compact,
+                                  ),
+
+                                  SizedBox(height: compact ? 18 : 24),
+
+                                  // ── DAILY GOAL & STREAK ────────────────────────
+                                  _DailyGoalProgress(
+                                    dataProvider:
+                                        Provider.of<DataProvider>(context),
+                                    timerProvider: timerProvider,
+                                    isDark: Theme.of(context).brightness ==
+                                        Brightness.dark,
+                                  ),
+
+                                  SizedBox(height: compact ? 12 : 16),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 );
               },
             ),
-          ),
-        ),
-        const SafeArea(
-          top: false,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            child: BannerAdWidget(),
           ),
         ),
       ],
@@ -876,8 +875,13 @@ class _TimerScreenState extends State<TimerScreen>
 class _ModeSelector extends StatelessWidget {
   final TimerMode currentMode;
   final ValueChanged<TimerMode> onModeChange;
+  final bool compact;
 
-  const _ModeSelector({required this.currentMode, required this.onModeChange});
+  const _ModeSelector({
+    required this.currentMode,
+    required this.onModeChange,
+    required this.compact,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -906,7 +910,7 @@ class _ModeSelector extends StatelessWidget {
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(vertical: compact ? 7 : 10),
                 decoration: BoxDecoration(
                   gradient: isSelected
                       ? LinearGradient(
@@ -927,12 +931,15 @@ class _ModeSelector extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(meta.emoji, style: const TextStyle(fontSize: 16)),
+                    Text(
+                      meta.emoji,
+                      style: TextStyle(fontSize: compact ? 14 : 16),
+                    ),
                     const SizedBox(height: 2),
                     AnimatedDefaultTextStyle(
                       duration: const Duration(milliseconds: 200),
                       style: GoogleFonts.inter(
-                        fontSize: 11,
+                        fontSize: compact ? 10 : 11,
                         fontWeight:
                             isSelected ? FontWeight.bold : FontWeight.w500,
                         color: isSelected
@@ -1086,6 +1093,7 @@ class _TimerRing extends StatelessWidget {
   final TimerMode mode;
   final _ModeMeta meta;
   final TimerProvider timerProvider;
+  final bool compact;
 
   const _TimerRing({
     required this.timeText,
@@ -1096,6 +1104,7 @@ class _TimerRing extends StatelessWidget {
     required this.mode,
     required this.meta,
     required this.timerProvider,
+    required this.compact,
   });
 
   @override
@@ -1104,7 +1113,7 @@ class _TimerRing extends StatelessWidget {
     final textColor =
         Theme.of(context).textTheme.bodyLarge?.color ?? Colors.white;
 
-    const double size = 280;
+    final size = compact ? 220.0 : 280.0;
 
     return SizedBox(
       width: size,
@@ -1184,16 +1193,21 @@ class _TimerRing extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (isBreak)
-                  Text('☕', style: const TextStyle(fontSize: 22))
+                  Text('☕', style: TextStyle(fontSize: compact ? 18 : 22))
                 else if (isRunning)
-                  Text(meta.emoji, style: const TextStyle(fontSize: 22))
+                  Text(
+                    meta.emoji,
+                    style: TextStyle(fontSize: compact ? 18 : 22),
+                  )
                 else
                   const SizedBox.shrink(),
                 if (isBreak || isRunning) const SizedBox(height: 4),
                 Text(
                   timeText,
                   style: GoogleFonts.robotoMono(
-                    fontSize: mode == TimerMode.serbest ? 52 : 48,
+                    fontSize: mode == TimerMode.serbest
+                        ? (compact ? 42 : 52)
+                        : (compact ? 38 : 48),
                     fontWeight: FontWeight.w200,
                     color: isBreak ? const Color(0xFFFFB800) : textColor,
                     letterSpacing: -1,
@@ -1323,6 +1337,7 @@ class _ActionButtons extends StatelessWidget {
   final bool isFocusFinished;
   final bool isBreakFinished;
   final void Function(int dur, int brk) onSave;
+  final bool compact;
 
   const _ActionButtons({
     required this.timerProvider,
@@ -1330,6 +1345,7 @@ class _ActionButtons extends StatelessWidget {
     required this.isFocusFinished,
     required this.isBreakFinished,
     required this.onSave,
+    required this.compact,
   });
 
   @override
@@ -1419,8 +1435,8 @@ class _ActionButtons extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            width: 180,
-            height: 180,
+            width: compact ? 132 : 180,
+            height: compact ? 132 : 180,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: RadialGradient(
@@ -1446,7 +1462,11 @@ class _ActionButtons extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(primaryIcon, color: Colors.white, size: 48),
+                  Icon(
+                    primaryIcon,
+                    color: Colors.white,
+                    size: compact ? 38 : 48,
+                  ),
                   const SizedBox(height: 6),
                   Text(primaryLabel,
                       textAlign: TextAlign.center,
@@ -1460,7 +1480,7 @@ class _ActionButtons extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 28),
+        SizedBox(height: compact ? 18 : 28),
 
         // ── SECONDARY BUTTONS ROW
         Wrap(
@@ -1608,36 +1628,55 @@ class _DailyGoalProgress extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: primary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: primary.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(Icons.flag_rounded, color: primary, size: 16),
                     ),
-                    child: Icon(Icons.flag_rounded, color: primary, size: 16),
-                  ),
-                  const SizedBox(width: 10),
-                  Text('Günlük Hedef',
-                      style: GoogleFonts.inter(
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(
+                        'Günlük Hedef',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.inter(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
-                          color: textColor)),
-                ],
+                          color: textColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                children: [
-                  const Text('🔥', style: TextStyle(fontSize: 16)),
-                  const SizedBox(width: 4),
-                  Text('${dataProvider.currentStreak} Gün Seri',
-                      style: GoogleFonts.inter(
+              const SizedBox(width: 8),
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('🔥', style: TextStyle(fontSize: 16)),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${dataProvider.currentStreak} Gün Seri',
+                        style: GoogleFonts.inter(
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
-                          color: const Color(0xFFFF9F1C))),
-                ],
+                          color: const Color(0xFFFF9F1C),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

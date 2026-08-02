@@ -1,6 +1,6 @@
 # DGS Rehberi Gizlilik Politikası
 
-**Son güncelleme:** 27 Temmuz 2026
+**Son güncelleme:** 1 Ağustos 2026
 
 DGS Rehberi, çalışma planlama ve takip özelliklerini hesap oluşturmadan kullanmanızı sağlar.
 
@@ -20,7 +20,7 @@ Uygulama reklam göstermek için Google Mobile Ads (AdMob) hizmetini kullanır. 
 
 Gerekli bölgelerde Google User Messaging Platform üzerinden reklam ve kişisel veri kullanım tercihleri sorulur. İzin durumu alınmadan reklam isteği başlatılmaz. Sunulduğu bölgelerde tercihlerinizi uygulamanın Ayarlar ekranındaki **Reklam Gizliliği** seçeneğinden yeniden değiştirebilirsiniz.
 
-iOS cihazlarda kişiselleştirilmiş reklam ve reklam ölçümü için Apple Uygulama Takibi Şeffaflığı izni istenebilir. İzni reddetmeniz uygulamanın kullanılmasını engellemez.
+iOS cihazlarda reklam istekleri kişiselleştirilmemiş olarak gönderilir. DGS Rehberi, uygulamalar ve web siteleri arasında takip izni istemez.
 
 ## Resmî kurumlarla ilişki
 

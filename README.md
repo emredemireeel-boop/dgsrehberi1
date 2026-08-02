@@ -11,7 +11,7 @@ DGS hazırlığı için çalışma süresi, hedef, deneme sonucu, soru, not ve p
 - Notlara kamera veya fotoğraf arşivinden görsel ekleme
 - Açık/koyu tema
 - Google AdMob banner ve geçiş reklamları
-- Google UMP ile reklam rızası ve iOS takip izni akışı
+- Google UMP ile reklam rızası ve iOS'ta kişiselleştirilmemiş reklamlar
 
 Uygulama ÖSYM veya başka bir resmî kurum tarafından sunulmaz ya da desteklenmez.
 

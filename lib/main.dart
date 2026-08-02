@@ -22,10 +22,10 @@ import 'screens/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // FlutterForegroundTask başlangıç konfigürasyonu
-  if (!kIsWeb) {
+  // Foreground service yalnızca Android'de kullanılır. iOS'ta sayaç,
+  // gerçek zaman damgasından ilerletilerek gereksiz arka plan yetkisi istemez.
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     TimerForegroundService.init();
-    // Arka plan isolate ile iletişim portunu başlat
     FlutterForegroundTask.initCommunicationPort();
   }
 

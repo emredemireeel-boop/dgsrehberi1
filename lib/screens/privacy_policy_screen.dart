@@ -63,10 +63,10 @@ class PrivacyPolicyScreen extends StatelessWidget {
               ),
               _section(
                 colors,
-                '5. iOS Takip İzni',
-                'iOS cihazlarda kişiselleştirilmiş reklam ve reklam ölçümü için '
-                    'Apple Uygulama Takibi Şeffaflığı izni istenebilir. İzni '
-                    'reddetmeniz uygulamanın kullanılmasını engellemez.',
+                '5. iOS Reklamları',
+                'iOS cihazlarda reklam istekleri kişiselleştirilmemiş olarak '
+                    'gönderilir. DGS Rehberi uygulamalar ve web siteleri arasında '
+                    'takip izni istemez.',
               ),
               _section(
                 colors,
@@ -82,7 +82,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                     'emre.demireeel@gmail.com adresine yazabilirsiniz.',
               ),
               Text(
-                'Son güncelleme: 27 Temmuz 2026',
+                'Son güncelleme: 1 Ağustos 2026',
                 style: TextStyle(
                   color: textColor?.withValues(alpha: 0.55),
                   fontSize: 12,

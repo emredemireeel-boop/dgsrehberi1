@@ -140,7 +140,9 @@ class AdService {
     _isInterstitialLoading = true;
     InterstitialAd.load(
       adUnitId: adUnitId,
-      request: const AdRequest(),
+      request: AdRequest(
+        nonPersonalizedAds: defaultTargetPlatform == TargetPlatform.iOS,
+      ),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (ad) {
           _interstitialAd = ad;

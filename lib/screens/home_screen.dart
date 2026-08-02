@@ -193,40 +193,48 @@ class HomeScreenState extends State<HomeScreen>
   }
 
   PreferredSizeWidget _buildAppBar(bool isDark, Color accent) {
+    final compact = MediaQuery.sizeOf(context).width < 420;
+
     return AppBar(
       scrolledUnderElevation: 0,
       backgroundColor:
           isDark ? const Color(0xFF0D0B15) : const Color(0xFFFAFAFC),
       surfaceTintColor: Colors.transparent,
-      title: Row(
-        children: [
-          // App logo
-          Container(
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                    color: const Color(0xFF7F5AF0).withValues(alpha: 0.2),
-                    blurRadius: 10)
-              ],
+      titleSpacing: 12,
+      title: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerLeft,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // App logo
+            Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                      color: const Color(0xFF7F5AF0).withValues(alpha: 0.2),
+                      blurRadius: 10)
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset('assets/logosefaf.png', fit: BoxFit.cover),
+              ),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset('assets/logosefaf.png', fit: BoxFit.cover),
+            const SizedBox(width: 10),
+            Text(
+              'DGS Rehberi',
+              style: GoogleFonts.outfit(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : const Color(0xFF16161A),
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            'DGS Rehberi',
-            style: GoogleFonts.outfit(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : const Color(0xFF16161A),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         // DGS Geri sayım butonu
@@ -238,7 +246,10 @@ class HomeScreenState extends State<HomeScreen>
                 Transform.scale(scale: _pulseAnim.value, child: child),
             child: Container(
               margin: const EdgeInsets.only(right: 12),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: EdgeInsets.symmetric(
+                horizontal: compact ? 9 : 12,
+                vertical: 6,
+              ),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -257,7 +268,7 @@ class HomeScreenState extends State<HomeScreen>
                       size: 13, color: Color(0xFF2CB67D)),
                   const SizedBox(width: 5),
                   Text(
-                    'DGS: ${_daysLabel()}',
+                    compact ? _daysLabel() : 'DGS: ${_daysLabel()}',
                     style: GoogleFonts.robotoMono(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,

@@ -28,20 +28,10 @@
 		<false/>
 		<key>GADApplicationIdentifier</key>
 		<string>ca-app-pub-6387001035314883~4126958558</string>
-		<key>NSUserTrackingUsageDescription</key>
-		<string>Bu izin, size daha uygun reklamlar göstermek ve reklam performansını ölçmek için kullanılır.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>Soru ve notlarınıza fotoğraf ekleyebilmeniz için kamera erişimi gerekir.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Soru ve notlarınıza görsel ekleyebilmeniz için fotoğraf arşivi erişimi gerekir.</string>
-		<key>BGTaskSchedulerPermittedIdentifiers</key>
-		<array>
-			<string>com.pravera.flutter_foreground_task.refresh</string>
-		</array>
-		<key>UIBackgroundModes</key>
-		<array>
-			<string>fetch</string>
-		</array>
 		<key>SKAdNetworkItems</key>
 		<array>
 			<dict>

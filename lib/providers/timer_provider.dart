@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -8,7 +9,11 @@ import '../screens/home_screen.dart';
 
 enum TimerMode { serbest, pomodoro, derinOdak, maraton }
 
-class TimerProvider with ChangeNotifier {
+class TimerProvider with ChangeNotifier, WidgetsBindingObserver {
+  TimerProvider() {
+    WidgetsBinding.instance.addObserver(this);
+  }
+
   TimerMode _currentMode = TimerMode.serbest;
 
   int _secondsElapsed = 0;
@@ -19,6 +24,7 @@ class TimerProvider with ChangeNotifier {
   final int _totalSets = 4;
 
   Timer? _timer;
+  DateTime? _lastTickAt;
   bool _isRunning = false;
   bool _isBreakMode = false;
 
@@ -119,48 +125,27 @@ class TimerProvider with ChangeNotifier {
   }
 
   void startTimer() {
-    if (_timer != null) _timer!.cancel();
     _isRunning = true;
     _isBreakMode = false;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_currentMode != TimerMode.serbest &&
-          _secondsElapsed >= focusTargetSeconds) {
-        pauseTimer();
-        HapticFeedback.heavyImpact();
-        notifyListeners();
-        return;
-      }
-      _secondsElapsed++;
-      _updateNotification();
-      notifyListeners();
-    });
-    _startForegroundService();
+    _startClock();
+    unawaited(_startForegroundService());
     notifyListeners();
   }
 
   void pauseTimer() {
+    _syncElapsedTime(notify: false);
     _timer?.cancel();
+    _timer = null;
+    _lastTickAt = null;
     _isRunning = false;
     _updateNotificationForced();
     notifyListeners();
   }
 
   void startBreak() {
-    if (_timer != null) _timer!.cancel();
     _isRunning = true;
     _isBreakMode = true;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_currentMode != TimerMode.serbest &&
-          _breakSecondsElapsed >= breakTargetSeconds) {
-        pauseTimer();
-        HapticFeedback.heavyImpact();
-        notifyListeners();
-        return;
-      }
-      _breakSecondsElapsed++;
-      _updateNotification();
-      notifyListeners();
-    });
+    _startClock();
     _updateNotificationForced();
     notifyListeners();
   }
@@ -189,6 +174,8 @@ class TimerProvider with ChangeNotifier {
 
   void resetTimer() {
     _timer?.cancel();
+    _timer = null;
+    _lastTickAt = null;
     _secondsElapsed = 0;
     _breakSecondsElapsed = 0;
     _currentSet = 1;
@@ -198,9 +185,76 @@ class TimerProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void _startClock() {
+    _timer?.cancel();
+    _lastTickAt = DateTime.now();
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => _syncElapsedTime(),
+    );
+  }
+
+  void _syncElapsedTime({bool notify = true}) {
+    if (!_isRunning || _lastTickAt == null) return;
+
+    final now = DateTime.now();
+    final elapsedSeconds = now.difference(_lastTickAt!).inSeconds;
+    if (elapsedSeconds <= 0) return;
+
+    _lastTickAt = _lastTickAt!.add(Duration(seconds: elapsedSeconds));
+    var finished = false;
+
+    if (_isBreakMode) {
+      _breakSecondsElapsed += elapsedSeconds;
+      if (_currentMode != TimerMode.serbest &&
+          _breakSecondsElapsed >= breakTargetSeconds) {
+        _breakSecondsElapsed = breakTargetSeconds;
+        finished = true;
+      }
+    } else {
+      _secondsElapsed += elapsedSeconds;
+      if (_currentMode != TimerMode.serbest &&
+          _secondsElapsed >= focusTargetSeconds) {
+        _secondsElapsed = focusTargetSeconds;
+        finished = true;
+      }
+    }
+
+    if (finished) {
+      _timer?.cancel();
+      _timer = null;
+      _lastTickAt = null;
+      _isRunning = false;
+      HapticFeedback.heavyImpact();
+    }
+
+    _updateNotification();
+    if (notify) notifyListeners();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused) {
+      _syncElapsedTime();
+    }
+  }
+
   // ─── Foreground Service Helpers ──────────────────────────────────────────
 
+  bool get _supportsForegroundService =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
   Future<void> _startForegroundService() async {
+    if (!_supportsForegroundService) return;
+
+    final permission =
+        await FlutterForegroundTask.checkNotificationPermission();
+    if (permission != NotificationPermission.granted) {
+      await FlutterForegroundTask.requestNotificationPermission();
+    }
+
     // Önceki dinleyicileri temizle ve yeniden dinle
     FlutterForegroundTask.removeTaskDataCallback(_onTaskData);
     FlutterForegroundTask.addTaskDataCallback(_onTaskData);
@@ -218,6 +272,7 @@ class TimerProvider with ChangeNotifier {
   }
 
   void _updateNotification() {
+    if (!_supportsForegroundService) return;
     // Saniyede en fazla 1 kez güncelle (throttle)
     final int now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastNotifUpdate < 900) return;
@@ -226,11 +281,13 @@ class TimerProvider with ChangeNotifier {
   }
 
   void _updateNotificationForced() {
+    if (!_supportsForegroundService) return;
     _lastNotifUpdate = 0;
     _doUpdateNotification();
   }
 
   Future<void> _doUpdateNotification() async {
+    if (!_supportsForegroundService) return;
     final bool running = await FlutterForegroundTask.isRunningService;
     if (!running) return;
     final int displaySeconds =
@@ -245,6 +302,7 @@ class TimerProvider with ChangeNotifier {
   }
 
   Future<void> _stopForegroundService() async {
+    if (!_supportsForegroundService) return;
     FlutterForegroundTask.removeTaskDataCallback(_onTaskData);
     await TimerForegroundService.stopService();
   }
@@ -280,8 +338,11 @@ class TimerProvider with ChangeNotifier {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
-    FlutterForegroundTask.removeTaskDataCallback(_onTaskData);
+    if (_supportsForegroundService) {
+      FlutterForegroundTask.removeTaskDataCallback(_onTaskData);
+    }
     super.dispose();
   }
 }
