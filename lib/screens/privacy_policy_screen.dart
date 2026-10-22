@@ -65,7 +65,9 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 colors,
                 '5. iOS Reklamları',
                 'iOS cihazlarda reklam istekleri kişiselleştirilmemiş olarak '
-                    'gönderilir. DGS Rehberi uygulamalar ve web siteleri arasında '
+                    'gönderilir; yayıncı birinci taraf kimliği kapatılır. '
+                    'Reklam SDK’sının teknik veri işlemesi devam edebilir. '
+                    'DGS Rehberi uygulamalar ve web siteleri arasında '
                     'takip izni istemez.',
               ),
               _section(
@@ -82,7 +84,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                     'emre.demireeel@gmail.com adresine yazabilirsiniz.',
               ),
               Text(
-                'Son güncelleme: 1 Ağustos 2026',
+                'Son güncelleme: 22 Ekim 2026',
                 style: TextStyle(
                   color: textColor?.withValues(alpha: 0.55),
                   fontSize: 12,

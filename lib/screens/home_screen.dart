@@ -17,6 +17,7 @@ import 'dgs_soru_dagilimi_screen.dart';
 import 'settings_screen.dart';
 import 'questions_screen.dart';
 import '../widgets/banner_ad_widget.dart';
+import '../widgets/native_ad_widget.dart';
 
 // ── Nav item definition ─────────────────────────────────────────────────────
 class _NavItem {
@@ -155,7 +156,7 @@ class HomeScreenState extends State<HomeScreen>
           final dueCount = qProvider.dueQuestions.length;
           // Plan ve Notes kendi Scaffold'larında banner gösterir
           final bool showHomeBanner =
-              _selectedIndex != 1 && _selectedIndex != 4;
+              _selectedIndex != 1 && _selectedIndex != 4 && _selectedIndex != 5;
           return Column(
             children: [
               // Due questions banner
@@ -178,8 +179,9 @@ class HomeScreenState extends State<HomeScreen>
               if (showHomeBanner)
                 const SafeArea(
                   top: false,
+                  bottom: false,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    padding: EdgeInsets.symmetric(vertical: 4),
                     child: BannerAdWidget(),
                   ),
                 ),
@@ -458,6 +460,7 @@ class _KesfetScreen extends StatelessWidget {
                 .map((item) => _KesfetCard(item: item, isDark: isDark))
                 .toList(),
           ),
+          const NativeAdWidget(),
         ],
       ),
     );

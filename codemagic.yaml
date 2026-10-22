@@ -11,13 +11,13 @@ workflows:
           include: true
       cancel_previous_builds: true
     integrations:
-      app_store_connect: Codemagic
+      app_store_connect: YKS Codemagic
     environment:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.dgsrehberi.app
-      flutter: stable
-      xcode: latest
+      flutter: 3.38.5
+      xcode: 26.6
       cocoapods: default
     scripts:
       - name: Flutter paketlerini hazırla
@@ -35,8 +35,8 @@ workflows:
       - name: App Store IPA dosyasını oluştur
         script: |
           flutter build ipa --release \
-            --build-name=1.1.1 \
-            --build-number=$((PROJECT_BUILD_NUMBER + 5)) \
+            --build-name=1.1.4 \
+            --build-number=9 \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa

@@ -1393,9 +1393,7 @@ class _ActionButtons extends StatelessWidget {
         primaryIcon = Icons.coffee_rounded;
         primaryColor = const Color(0xFFFFB800);
         primaryAction = () {
-          AdService.instance.showInterstitialAd(
-            onAdDismissed: () => timerProvider.startBreak(),
-          );
+          timerProvider.startBreak();
         };
       } else {
         primaryLabel = 'Duraklat';
@@ -1498,10 +1496,15 @@ class _ActionButtons extends StatelessWidget {
                   color: const Color(0xFFFF4757),
                   onTap: () {
                     timerProvider.pauseTimer();
-                    AdService.instance.showInterstitialAd(
-                      onAdDismissed: () => onSave(timerProvider.secondsElapsed,
-                          timerProvider.breakSecondsElapsed),
-                    );
+                    void saveSession() => onSave(timerProvider.secondsElapsed,
+                        timerProvider.breakSecondsElapsed);
+                    if (timerProvider.secondsElapsed >= 5 * 60) {
+                      AdService.instance.showInterstitialAd(
+                        onAdDismissed: saveSession,
+                      );
+                    } else {
+                      saveSession();
+                    }
                   }),
 
             // Erken Mola (odak modlarında çalışırken)

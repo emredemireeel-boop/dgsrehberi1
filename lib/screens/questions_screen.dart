@@ -204,7 +204,7 @@ class QuestionsScreen extends StatelessWidget {
       // ── Banner Reklam (Alt) ────────────────────────────────────────────
       bottomNavigationBar: const SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          padding: EdgeInsets.symmetric(vertical: 4),
           child: BannerAdWidget(),
         ),
       ),

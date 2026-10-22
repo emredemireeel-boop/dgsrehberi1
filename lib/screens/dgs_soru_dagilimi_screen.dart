@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../services/ad_service.dart';
 import '../widgets/banner_ad_widget.dart';
 
 class _TopicRow {
@@ -70,10 +69,6 @@ class _DgsSoruDagilimiScreenState extends State<DgsSoruDagilimiScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    // Soru Dağılımı ekranı her açıldığında geçiş reklamı göster
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      AdService.instance.showInterstitialAd();
-    });
   }
 
   @override
@@ -117,7 +112,7 @@ class _DgsSoruDagilimiScreenState extends State<DgsSoruDagilimiScreen>
       ),
       bottomNavigationBar: const SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          padding: EdgeInsets.symmetric(vertical: 4),
           child: BannerAdWidget(),
         ),
       ),

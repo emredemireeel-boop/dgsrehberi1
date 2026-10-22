@@ -23,12 +23,18 @@ class AdService {
   static const String _prodInterstitialIos =
       'ca-app-pub-6387001035314883/4814308550';
 
-  static const bool _isTest = false;
+  static bool get _isTest => kDebugMode;
+  static const String _testNativeAndroid =
+      'ca-app-pub-3940256099942544/2247696110';
+  static const String _prodNativeAndroid =
+      'ca-app-pub-2265053267835785/7933530528';
 
   bool _mobileAdsStarted = false;
   bool _consentUpdateStarted = false;
   InterstitialAd? _interstitialAd;
   bool _isInterstitialLoading = false;
+  DateTime? _lastInterstitialShown;
+  static const Duration _interstitialCooldown = Duration(minutes: 15);
 
   final ValueNotifier<bool> adsReady = ValueNotifier<bool>(false);
   final ValueNotifier<bool> privacyOptionsRequired = ValueNotifier<bool>(false);
@@ -54,6 +60,13 @@ class AdService {
     return _isTest ? _testInterstitialIos : _prodInterstitialIos;
   }
 
+  String get nativeAdUnitId {
+    if (!isSupported || defaultTargetPlatform != TargetPlatform.android) {
+      return '';
+    }
+    return _isTest ? _testNativeAndroid : _prodNativeAndroid;
+  }
+
   Future<void> initialize() async {
     if (!isSupported || _consentUpdateStarted) return;
     _consentUpdateStarted = true;
@@ -63,8 +76,7 @@ class AdService {
       parameters,
       () async {
         await _refreshPrivacyOptionsRequirement();
-        await _startAdsIfAllowed();
-
+        // Wait for the current privacy form to finish before starting ads.
         ConsentForm.loadAndShowConsentFormIfRequired((formError) async {
           if (formError != null) {
             debugPrint(
@@ -94,14 +106,21 @@ class AdService {
     }
 
     _mobileAdsStarted = true;
-    await MobileAds.instance.initialize();
-    if (_isTest) {
-      await MobileAds.instance.updateRequestConfiguration(
-        RequestConfiguration(testDeviceIds: const ['EMULATOR']),
-      );
+    try {
+      if (_isTest) {
+        await MobileAds.instance.updateRequestConfiguration(
+          RequestConfiguration(testDeviceIds: const ['EMULATOR']),
+        );
+      }
+      await MobileAds.instance.initialize();
+      adsReady.value = true;
+      loadInterstitialAd();
+    } catch (error) {
+      // An unavailable ad SDK must not prevent studying or saving records.
+      _mobileAdsStarted = false;
+      adsReady.value = false;
+      debugPrint('Reklam SDK başlatılamadı: $error');
     }
-    adsReady.value = true;
-    loadInterstitialAd();
   }
 
   Future<void> _refreshPrivacyOptionsRequirement() async {
@@ -158,7 +177,12 @@ class AdService {
   }
 
   Future<void> showInterstitialAd({VoidCallback? onAdDismissed}) async {
-    if (!isSupported || !adsReady.value || _interstitialAd == null) {
+    if (!isSupported ||
+        !adsReady.value ||
+        _interstitialAd == null ||
+        (_lastInterstitialShown != null &&
+            DateTime.now().difference(_lastInterstitialShown!) <
+                _interstitialCooldown)) {
       onAdDismissed?.call();
       loadInterstitialAd();
       return;
@@ -181,6 +205,7 @@ class AdService {
       },
     );
 
+    _lastInterstitialShown = DateTime.now();
     await ad.show();
   }
 

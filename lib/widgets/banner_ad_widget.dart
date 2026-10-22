@@ -46,11 +46,8 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
     }
 
     _isLoading = true;
-    final width = MediaQuery.sizeOf(context).width.truncate();
-    final adaptiveSize = await AdSize.getLargeAnchoredAdaptiveBannerAdSize(
-      width,
-    );
-    final size = adaptiveSize ?? AdSize.banner;
+    // The fixed 320x50 format keeps the study screen usable on small phones.
+    const size = AdSize.banner;
 
     final ad = BannerAd(
       adUnitId: AdService.instance.bannerAdUnitId,
@@ -94,14 +91,11 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
       return const SizedBox.shrink();
     }
 
-    return SafeArea(
-      top: false,
-      child: Center(
-        child: SizedBox(
-          width: _adSize!.width.toDouble(),
-          height: _adSize!.height.toDouble(),
-          child: AdWidget(ad: _bannerAd!),
-        ),
+    return Center(
+      child: SizedBox(
+        width: _adSize!.width.toDouble(),
+        height: _adSize!.height.toDouble(),
+        child: AdWidget(ad: _bannerAd!),
       ),
     );
   }
