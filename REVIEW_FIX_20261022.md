@@ -1,6 +1,6 @@
 # DGS iOS ATT review correction
 
-Prepared version 1.1.4 (9), source commit 0601400. The rejected App Store binary 1.1.0 (5) still contains NSUserTrackingUsageDescription according to App Store Connect. The current source Info.plist has no such key or ATT dependency. Consequently the remaining Advertising Data tracking declaration cannot be published until a replacement binary is uploaded/selected; do not claim the correction is complete before then.
+Prepared version 1.1.4 (9), code changes in 0601400 and 158efca. The rejected App Store binary 1.1.0 (5) contained NSUserTrackingUsageDescription according to App Store Connect. The current source Info.plist has no such key or ATT dependency. Detaching old build 5 from the version draft unblocked the last privacy-label correction; the replacement IPA is still required before submission.
 
 ## Changes
 
@@ -16,12 +16,16 @@ Prepared version 1.1.4 (9), source commit 0601400. The rejected App Store binary
 
 ## External state
 
-Apple App Privacy: Coarse Location, Device ID and Product Interaction tracking flags changed to No. Advertising Data flag still Yes because Apple rejects No while the currently selected old binary contains the ATT usage string. A replacement IPA is required to complete that last change and the review submission.
+Apple App Privacy: all tracking flags are now No, including Advertising Data. Other Diagnostic Data was added, bringing the disclosed SDK types to seven. Diagnostics are not linked to identity; the SDK's other identity-linked technical data remains disclosed. The last tracking edit initially failed while old build 5 was selected, then succeeded after that build was detached. This is a published label correction, not an approved application.
 
 Codemagic personal application created: `6ada1afd2a0c2094c2015302`, repository dgsrehberi1. Initial branch-loader UI errors were recovered by connecting the same public repository through its direct Git URL and allowing configuration loading to complete. First build `6ada1bc08a524d15d6a60cfe` failed preflight because no matching signing profile was stored.
 
-The existing invalid Apple profile `67NH4PHNYP` was renewed with the already-used distribution certificate `C726PJ97KF` (expires 15 October 2027), without creating or revoking any certificate. Codemagic confirmed storage as `dgs_app_store_oct2026`. A signed build is being retried; no completed IPA is claimed in this report yet.
+The existing invalid Apple profile `67NH4PHNYP` was renewed with the already-used distribution certificate `C726PJ97KF` (expires 15 October 2027), without creating or revoking any certificate. Codemagic confirmed storage as `dgs_app_store_oct2026`.
 
 The Podfile now uses Flutter's standard static pod integration, matching the Google Ads header correction verified in the KPSS project's 29006e7 build. App Store version draft is 1.1.4 with the old build detached and English review notes explaining the contextual-ad path. The Codemagic account reports 145/500 free macOS minutes used; no subscription or payment was enabled.
+
+Build 2 was cancelled before execution to include the Podfile correction. Latest build **6ada1d488a524d15d6a60dad** (index 3, main, commit 158efca) was accepted and remains **queued**. No IPA, TestFlight upload, successful Swift compile or App Review resubmission is claimed yet.
+
+Next: wait for this build, inspect signed IPA Info.plist/privacy manifests, resolve any compile/upload error, select build 9 in the 1.1.4 draft, send the contextual-ad explanation to the existing review conversation, and submit the replacement version. No ATT video is requested from the user for this non-tracking path.
 
 Official configuration reference: https://developers.google.com/admob/ios/privacy/strategies
